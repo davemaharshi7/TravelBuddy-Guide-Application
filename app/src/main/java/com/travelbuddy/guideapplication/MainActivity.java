@@ -29,11 +29,33 @@ public class MainActivity extends AppCompatActivity {
     Intent plan;
     FirebaseUser user;
     private FirebaseAuth auth;
-
+    Switch toggle;
     Button logout;
     SharedPreferences shared;
     String guide_id,uid,guideName;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        DocumentReference docref;
+        docref = db.collection("Guides").document(guide_id);
+        docref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                boolean b = documentSnapshot.getBoolean("Available");
+                if( b^toggle.isChecked())
+                {
+                    toggle.toggle();
+                }
+                else
+                {
+
+                }
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,29 +68,26 @@ public class MainActivity extends AppCompatActivity {
         shared = getSharedPreferences("Travel_Data",Context.MODE_PRIVATE);
         MPlans=(Button) findViewById(R.id.button2);
         UProfile=(Button) findViewById(R.id.button);
+        UProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(profile);
+            }
+        });
+        MPlans.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(plan);
+            }
+        });
         guide_id =  shared.getString("guide_id","ERROR");
         guideName = shared.getString("guide_name","");
         welcome = findViewById(R.id.welcomeText);
         welcome.setText("Welcome!, "+guideName);
-        final Switch toggle = findViewById(R.id.availabilty);
+        toggle = findViewById(R.id.availabilty);
 
 
-        DocumentReference docref;
-        docref = db.collection("Guides").document(guide_id);
-        docref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                   boolean b = documentSnapshot.getBoolean("Available");
-                   if( b^toggle.isChecked())
-                   {
-                       toggle.toggle();
-                   }
-                   else
-                   {
 
-                   }
-            }
-        });
 
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -86,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
 
         logout = (Button) findViewById(R.id.button3);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -109,13 +130,5 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),message,Toast
                 .LENGTH_LONG).show();
     }
-    public void profile(View view)
-    {
-        startActivity(profile);
-    }
 
-    public void update(View view)
-    {
-        startActivity(plan);
-    }
 }

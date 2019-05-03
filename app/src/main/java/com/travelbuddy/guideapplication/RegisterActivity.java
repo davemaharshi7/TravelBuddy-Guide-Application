@@ -168,21 +168,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     //All Set GO FOR Authentication FiREBASE
                     CreateUserAccount(email,name,password);
-//                    String uid = mAuth.getCurrentUser().getUid();
-//                    db.collection("Users").document(uid)
-//                            .set()
-//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-//                                }
-//                            })
-//                            .addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception e) {
-//                                    Log.w(TAG, "Error writing document", e);
-//                                }
-//                            });
+
                 }
             }
         });

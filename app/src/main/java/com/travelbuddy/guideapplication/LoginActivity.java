@@ -79,12 +79,11 @@ public class LoginActivity extends AppCompatActivity {
                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            GuideRegister guideUser = documentSnapshot.toObject(GuideRegister
-                                    .class);
                             SharedPreferences.Editor editor = shared.edit();
                             //Log.d("USER",user.toString());
+                            String name = documentSnapshot.get("Guide_name").toString();
                             editor.putString("guide_email",log_email);
-                            editor.putString("guide_name",guideUser.getGuide_name());
+                            editor.putString("guide_name",name);
                             editor.commit();
                             changeActivity();
 
