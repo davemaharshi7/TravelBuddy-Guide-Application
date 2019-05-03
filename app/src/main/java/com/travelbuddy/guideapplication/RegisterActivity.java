@@ -37,8 +37,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.StatementEvent;
-
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RRRR";
@@ -50,11 +48,8 @@ public class RegisterActivity extends AppCompatActivity {
     Intent home;
     private long male = 0;
     private long female = 1;
-
     Hashtable<String,String> map;
     Hashtable<String,Long> mapGender;
-    Button submit;
-//    Spinner ;
     TextView loading;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -95,8 +90,8 @@ public class RegisterActivity extends AppCompatActivity {
                                     android.R.layout.simple_spinner_item, city);
                             areasAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             searchSpinner.setAdapter(areasAdapter);
-//                            submit.setEnabled(true);
-//                            loading.setVisibility(View.INVISIBLE);
+                            regBtn.setEnabled(true);
+                            loading.setVisibility(View.INVISIBLE);
 
                         } else {
                             Log.d("EEEE", "Error getting documents: ", task.getException());
@@ -120,9 +115,9 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         searchSpinner = findViewById(R.id.citySelection);
-
+        loading = findViewById(R.id.loadingText);
         userEmail =(EditText) findViewById(R.id.email_input_reg);
-        userName = (EditText) findViewById(R.id.name_input_reg);
+        userName = (EditText) findViewById(R.id.name);
         userPassword = (EditText) findViewById(R.id.pass_input_reg);
         userPassword2 = (EditText) findViewById(R.id.cpass_input_reg);
         loadingProgrss = (ProgressBar) findViewById(R.id.progressBar2);
@@ -156,15 +151,59 @@ public class RegisterActivity extends AppCompatActivity {
                 final String password2 = userPassword2.getText().toString().trim();
                 final String name = userName.getText().toString().trim();
 
-                if (email.isEmpty() || name.isEmpty() || password.isEmpty() || !password.equals
-                        (password2)) {
-
-                    //Toast for error Message
-                    showMessage("Please Enter All Fields.");
+                if (userEmail.getText().toString().trim().isEmpty()  ){
+                    userEmail.setError("Please Enter Email");
+                    userEmail.requestFocus();
                     regBtn.setVisibility(View.VISIBLE);
                     loadingProgrss.setVisibility(View.INVISIBLE);
+                    return;
 
-                } else{
+//
+
+                }else if(userName.getText().toString().trim().isEmpty()){
+                    userName.setError("Please Add Name!");
+                    userName.requestFocus();
+                    regBtn.setVisibility(View.VISIBLE);
+                    loadingProgrss.setVisibility(View.INVISIBLE);
+                    return;
+
+                }else if(userPassword.getText().toString().trim().isEmpty()){
+                    userPassword.setError("Please Add Proper Password!");
+                    userPassword.requestFocus();
+                    regBtn.setVisibility(View.VISIBLE);
+                    loadingProgrss.setVisibility(View.INVISIBLE);
+                    return;
+                }else if(userPassword2.getText().toString().trim().isEmpty() || !password.equals(password2)){
+                    userPassword2.setError("Please Add same confirm Password!");
+                    userPassword2.requestFocus();
+                    regBtn.setVisibility(View.VISIBLE);
+                    loadingProgrss.setVisibility(View.INVISIBLE);
+                    return;
+                }
+
+                else if(description.getText().toString().isEmpty()){
+                    description.setError("Please Add Proper Description!");
+                    description.requestFocus();
+                    regBtn.setVisibility(View.VISIBLE);
+                    loadingProgrss.setVisibility(View.INVISIBLE);
+                    return;
+                }
+                else if(experience.getText().toString().isEmpty()){
+                    experience.setError("Please Add Proper Experience!");
+                    experience.requestFocus();
+                    regBtn.setVisibility(View.VISIBLE);
+                    loadingProgrss.setVisibility(View.INVISIBLE);
+                    return;
+                }
+                else if(language.getText().toString().isEmpty()){
+                    language.setError("Please Add Proper Languages know to you!");
+                    language.requestFocus();
+                    regBtn.setVisibility(View.VISIBLE);
+                    loadingProgrss.setVisibility(View.INVISIBLE);
+                    return;
+                }
+
+                else{
 
                     //All Set GO FOR Authentication FiREBASE
                     CreateUserAccount(email,name,password);
@@ -184,13 +223,11 @@ public class RegisterActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             //Account Created
                             showMessage("Account Created");
-                            //After Account Creation we need to update his profile picture
-                            //updateUserInfo(name,pickedImgUri,mAuth.getCurrentUser());
 
                             FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
-                            //Toast.makeText(getApplicationContext(),"" + currentFirebaseUser.getUid(), Toast.LENGTH_SHORT).show();
                             String uid = currentFirebaseUser.getUid();
-//                            String uid = mAuth.getCurrentUser().getUid();
+
+
                             String desc = description.getText().toString();
                             String exp = experience.getText().toString();
 

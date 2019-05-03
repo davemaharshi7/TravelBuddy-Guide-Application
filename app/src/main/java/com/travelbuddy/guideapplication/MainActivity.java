@@ -3,8 +3,10 @@ package com.travelbuddy.guideapplication;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -13,7 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -33,25 +37,37 @@ public class MainActivity extends AppCompatActivity {
     Button logout;
     SharedPreferences shared;
     String guide_id,uid,guideName;
-    FirebaseFirestore db=FirebaseFirestore.getInstance();
-
+    FirebaseFirestore db;
     @Override
     protected void onStart() {
         super.onStart();
 
         DocumentReference docref;
         docref = db.collection("Guides").document(guide_id);
-        docref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        docref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                boolean b = documentSnapshot.getBoolean("Available");
-                if( b^toggle.isChecked())
-                {
-                    toggle.toggle();
-                }
-                else
-                {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        boolean b = document.getBoolean("Available");
+                        if (b ^ toggle.isChecked()) {
+                            toggle.toggle();
+                        }
+                    } else {
+                        Log.d("TEST_MAIN", "No such document");
+                        showMessage("Oops! Something Went Wrong!");
+                        SharedPreferences.Editor editor = shared.edit();
+                        editor.clear();
+                        editor.commit();
+                        auth.signOut();
+                        Intent i = new Intent(getApplicationContext(),login_signUp.class);
+                        startActivity(i);
+                        finish();
 
+                    }
+                } else {
+                    Log.d("TEST_MAIN", "get failed with ", task.getException());
                 }
             }
         });
@@ -62,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         profile=new Intent(MainActivity.this,ProfileActivity.class);
         plan =new Intent(MainActivity.this,PlanActivity.class);

@@ -70,34 +70,44 @@ public class LoginActivity extends AppCompatActivity {
                     login.setVisibility(View.VISIBLE);
                     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
                     //Toast.makeText(getApplicationContext(),"" + currentFirebaseUser.getUid(), Toast.LENGTH_SHORT).show();
-                    String uid = currentFirebaseUser.getUid();
-//                            String uid = mAuth.getCurrentUser().getUid();
-                    SharedPreferences.Editor editor = shared.edit();
-                    editor.putString("guide_id",uid);
-                    editor.commit();
+                    final String uid = currentFirebaseUser.getUid();
+////                            String uid = mAuth.getCurrentUser().getUid();
+//                    SharedPreferences.Editor editor = shared.edit();
+//                    editor.commit();
                     DocumentReference docRef = db.collection("Guides").document(uid);
-                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            SharedPreferences.Editor editor = shared.edit();
-                            //Log.d("USER",user.toString());
-                            String name = documentSnapshot.get("Guide_name").toString();
-                            editor.putString("guide_email",log_email);
-                            editor.putString("guide_name",name);
-                            editor.commit();
-                            changeActivity();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            showMessage("You are not registered as Guide!");
-                            Intent r = new Intent(getApplicationContext(),RegisterActivity.class);
-                            startActivity(r);
-                            finish();
-                            return;
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Log.d("TEST", "DocumentSnapshot data: " + document.getData());
+                                    SharedPreferences.Editor editor = shared.edit();
+                                    //Log.d("USER",user.toString());
+                                    showMessage("HE IS REGISTERED GUIDE!");
+                                    String name = document.get("Guide_name").toString();
+                                    editor.putString("guide_email",log_email);
+                                    editor.putString("guide_id",uid);
+                                    editor.putString("guide_name",name);
+                                    editor.commit();
+                                    changeActivity();
+                                }
+                                else {
+                                    Log.d("TEST", "No such document");
+                                    showMessage("You are not registered as Guide!");
+                                    mAuth.signOut();
+                                    Intent r = new Intent(getApplicationContext(),RegisterActivity.class);
+                                    startActivity(r);
+                                    finish();
+                                    return;
+                                }
+                            } else {
+                                Log.d("TEST", "get failed with ", task.getException());
+                            }
                         }
                     });
+
+
 
 
                 }else {
