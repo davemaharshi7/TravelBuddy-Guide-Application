@@ -239,6 +239,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                             String lang = language.getText().toString();
                             SharedPreferences.Editor editor = shared.edit();
+                            editor.putString("guide_email",email);
                             editor.putString("guide_id",uid);
                             editor.putString("guide_name",name);
 //                            UserRegister u = new UserRegister(name,email,sha_password);
@@ -258,6 +259,7 @@ public class RegisterActivity extends AppCompatActivity {
                             guideMap.put("Experience", exp);
                             guideMap.put("Gender",g);
                             guideMap.put("Guide_name", name);
+                            guideMap.put("Guide_email",email);
                             guideMap.put("Language",lang );
                             guideMap.put("Ratings", (long)3);
 

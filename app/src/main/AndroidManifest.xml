@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/TravelBuddy">
         <activity
-            android:screenOrientation="portrait"
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/TravelBuddy" />
         <activity
             android:name=".SplashScreen"
@@ -27,17 +27,22 @@
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/TravelBuddy" />
-        <activity android:name=".VerifyMobileActivity"
-            android:screenOrientation="portrait"/>
         <activity
-            android:screenOrientation="portrait"
-            android:name=".login_signUp" />
-        <activity android:name=".RegisterActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ProfileActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".PlanActivity"
-            android:screenOrientation="portrait"></activity>
+            android:name=".VerifyMobileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".login_signUp"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PlanActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".addPlanActivity"></activity>
     </application>
 
 </manifest>

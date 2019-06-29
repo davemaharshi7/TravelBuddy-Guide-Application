@@ -131,18 +131,20 @@ public class ProfileActivity extends AppCompatActivity {
 
                 String c_name = searchSpinner.getSelectedItem().toString();
                 String c_key = map.get(c_name);
-
+                SharedPreferences shared = getSharedPreferences("Travel_Data",Context.MODE_PRIVATE);
+                String email=shared.getString("guide_email","Error");
 
                 Map<String, Object> guideMap = new HashMap<>();
                 guideMap.put("Current_city",c_key);
                 //guideMap.put("Available", true);
                 guideMap.put("Description",description.getText().toString().trim());
                 guideMap.put("Experience",experience.getText().toString().trim());
+                guideMap.put("Guide_email",email);
                 guideMap.put("Gender",g);
                 guideMap.put("Guide_name", name.getText().toString());
                 guideMap.put("Language",language.getText().toString());
                 //guideMap.put("Ratings", (long)3);
-                SharedPreferences shared = getSharedPreferences("Travel_Data", Context.MODE_PRIVATE);
+                //SharedPreferences shared = getSharedPreferences("Travel_Data", Context.MODE_PRIVATE);
                 String guide_id = shared.getString("guide_id","Error");
                 db.collection("Guides").document(guide_id)
                         .update(guideMap)

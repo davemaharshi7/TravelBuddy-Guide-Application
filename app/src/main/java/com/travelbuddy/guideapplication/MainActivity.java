@@ -36,13 +36,15 @@ public class MainActivity extends AppCompatActivity {
     Switch toggle;
     Button logout;
     SharedPreferences shared;
+    TextView cityText;
+    String cityName;
     String guide_id,uid,guideName;
     FirebaseFirestore db;
+    DocumentReference docref,cityref;
     @Override
     protected void onStart() {
         super.onStart();
 
-        DocumentReference docref;
         docref = db.collection("Guides").document(guide_id);
         docref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -51,6 +53,20 @@ public class MainActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         boolean b = document.getBoolean("Available");
+                        String city_id = document.get("Current_city").toString();
+                        cityref = db.collection("Cities").document(city_id);
+                        cityref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    cityName = document.get("CityName").toString();
+                                    cityText.setText("Current City :"+cityName);
+
+                                }
+                            }
+                        });
+
                         if (b ^ toggle.isChecked()) {
                             toggle.toggle();
                         }
@@ -102,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         welcome = findViewById(R.id.welcomeText);
         welcome.setText("Welcome!, "+guideName);
         toggle = findViewById(R.id.availabilty);
-
+        cityText = findViewById(R.id.cityName);
 
 
 
